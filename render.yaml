@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: sahara-support-platform
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --workers 1 --threads 4 --timeout 120 --bind 0.0.0.0:$PORT app:app
+    healthCheckPath: /healthz
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: DB_PATH
+        value: /var/data/sahara.db
+      - key: COOKIE_SECURE
+        value: "1"
+    disk:
+      name: sahara-data
+      mountPath: /var/data
+      sizeGB: 5
